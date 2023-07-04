@@ -1,0 +1,28 @@
+R_DEF: Internal format may change without notice
+local
+color black
+color white
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+id button
+id button2
+id imageView3
+id recyclerview
+id textView
+id textView2
+id ul_Description
+id ul_Name
+id ul_bigImg
+id ul_smallImg
+layout activity_list
+layout activity_main
+layout user_list_item
+mipmap ic_launcher
+mipmap ic_launcher_round
+string app_name
+string button1
+string button2
+style Base.Theme.Madpractical
+style Theme.Madpractical
+xml backup_rules
+xml data_extraction_rules
