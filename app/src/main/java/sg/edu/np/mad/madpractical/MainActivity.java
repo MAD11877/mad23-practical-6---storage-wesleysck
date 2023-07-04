@@ -1,39 +1,82 @@
 package sg.edu.np.mad.madpractical;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
+
+    private User user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        User user = new User ("bruh", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna.", 1, true);
+        Log.v(TAG, "onCreate");
 
-        TextView name = findViewById(R.id.textView2);
-        Intent receivingEnd = getIntent();
-        String nameGot = receivingEnd.getStringExtra("name");
-        name.setText(nameGot);
+        TextView UserID = findViewById(R.id.textView2);
+        Button follow = findViewById(R.id.button);
 
+        Intent receivedIntent = getIntent();
+        if (receivedIntent != null) {
+            String name = receivedIntent.getStringExtra("name");
+            String desc = receivedIntent.getStringExtra("desc");
 
+            if (name != null) {
+                UserID.setText(name);
+            }
 
-        TextView desc = findViewById(R.id.textView);
-        String descGot = receivingEnd.getStringExtra("desc");
-        desc.setText(descGot);
+            // Retrieve the user object from the database
+            DBHandler DB = new DBHandler(this, null, null, 1);
+            user = DB.getUser();
+            if (user == null) {
+                // If user not found in the database, create a new user object
+                user = new User(name, desc, 0, false);
+                DB.addUser(user);
+            } else {
+                // Update the user object with the received name and description
+                user.setName(name);
+                user.setDescription(desc);
+            }
+        }
 
-        Button followBtn = findViewById(R.id.button);
+        if (user != null) {
+            if (user.isFollowed()) {
+                follow.setText("Unfollow");
+            } else {
+                follow.setText("Follow");
+            }
+        }
 
-        followBtn.setOnClickListener(v -> {
-            user.followed = !user.followed;
-            followBtn.setText(user.followed ? "UNFOLLOW" : "FOLLOW");
-            Toast.makeText(getBaseContext(), user.followed ? "Followed" : "Unfollowed" , Toast.LENGTH_SHORT ).show();
+        DBHandler DB = new DBHandler(this, null, null, 1);
+        follow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (user != null) {
+                    if (user.isFollowed()) {
+                        user.setFollowed(false);
+                        follow.setText("Follow");
+                        Toast.makeText(MainActivity.this, "Unfollowed", Toast.LENGTH_SHORT).show();
+                    } else {
+                        user.setFollowed(true);
+                        follow.setText("Unfollow");
+                        Toast.makeText(MainActivity.this, "Followed", Toast.LENGTH_SHORT).show();
+                    }
+                    DB.updateUser(user);
+                }
+            }
         });
+
     }
 }

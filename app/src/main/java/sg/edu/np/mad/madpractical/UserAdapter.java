@@ -41,12 +41,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder>{
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setTitle("Profile");
                 builder.setMessage(String.valueOf(holder.tv1.getText()));
-                builder.setPositiveButton("View", new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int id){
-
+                builder.setPositiveButton("View", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
                         Intent profile = new Intent(activity, MainActivity.class);
-                        profile.putExtra("name", holder.tv1.getText());
-                        profile.putExtra("desc", holder.tv2.getText());
+                        User clickedUser = list_items.get(position); // Retrieve the clicked user from the list
+                        profile.putExtra("name", clickedUser.getName());
+                        profile.putExtra("desc", clickedUser.getDescription());
                         activity.startActivity(profile);
                     }
                 });
